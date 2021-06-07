@@ -9,7 +9,7 @@ app.get("/products", (req, res) => {
   const { titleQuery } = req.query;
   fs.readFile("Data.json", "utf8", (error, response) => {
     const products = Json.parse(response);
-    if (title) {
+    if (titleQuery) {
       const filterProducts = products.filter((item) =>
         item.title.includes(titleQuery)
       );
