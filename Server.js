@@ -40,6 +40,8 @@ mongoose
 
 app.get("/products", (req, res) => {
   const { titleQuery } = req.query;
+  const { minvalue, maxvalue } = req.body;
+
   Product.find({})
     .exec()
     .then((response) => {
@@ -48,6 +50,13 @@ app.get("/products", (req, res) => {
           item.title.includes(titleQuery)
         );
         res.send(filterProducts.length > 0 ? filterProducts : "No Data Found");
+      } else if (minvalue && maxvalue) {
+        const filterByRangePrice = response.filter(
+          (item) => item.price >= +minvalue && item.price <= +maxvalue
+        );
+        res.send(
+          filterByRangePrice.length > 0 ? filterByRangePrice : "No Data Found"
+        );
       } else {
         res.send(response);
       }
@@ -55,7 +64,6 @@ app.get("/products", (req, res) => {
 });
 
 app.get("/products/:id", (req, res) => {
-  // +req.params.id
   Product.find({ id: req.params.id })
     .exec()
     .then((response) => {
@@ -84,11 +92,12 @@ app.post("/products", (req, res) => {
 app.put("/products/:id", (req, res) => {
   const { id } = req.params.id;
   const { title, price, description, image, category } = req.body;
+  console.log("req.body", req.body);
   Product.updateOne(
     { id: id },
     { title, price, description, image, category },
     (err, response) => {
-      err ? console.log(err) : res.send("success");
+      err ? console.log(err) : res.send(response);
     }
   );
 });
